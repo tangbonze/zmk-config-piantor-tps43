@@ -1,0 +1,9 @@
+if SHIELD_PIANTOR_ROLE_CENTRAL
+
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+config ZMK_STUDIO
+    default y
+
+endif

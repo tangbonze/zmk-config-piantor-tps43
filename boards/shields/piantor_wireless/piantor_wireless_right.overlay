@@ -1,0 +1,21 @@
+#include "piantor_wireless.dtsi"
+
+&default_transform {
+    col-offset = <6>;
+};
+
+&five_col_transform {
+    col-offset = <6>;
+};
+
+&kscan0 {
+    /* Right half col6..col11 (inner index -> outer breakable pinky) */
+    col-gpios
+        = <&pro_micro 15 GPIO_ACTIVE_HIGH> /* col6  (PCB col5): U1.16 / P1.13 */
+        , <&pro_micro 14 GPIO_ACTIVE_HIGH> /* col7  (PCB col4): U1.15 / P1.11 */
+        , <&pro_micro 16 GPIO_ACTIVE_HIGH> /* col8  (PCB col3): U1.14 / P0.10 */
+        , <&pro_micro 10 GPIO_ACTIVE_HIGH> /* col9  (PCB col2): U1.13 / P0.09 */
+        , <&pro_micro  7 GPIO_ACTIVE_HIGH> /* col10 (PCB col1): U1.10 / P0.11 */
+        , <&pro_micro  6 GPIO_ACTIVE_HIGH> /* col11 (PCB col0): U1.9  / P1.00 (breakable pinky col) */
+        ;
+};

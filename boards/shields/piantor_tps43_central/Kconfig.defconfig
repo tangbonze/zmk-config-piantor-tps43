@@ -1,0 +1,15 @@
+if SHIELD_PIANTOR_TPS43_CENTRAL
+
+config INPUT
+    default y
+
+config I2C
+    default y
+
+config INPUT_TPS43
+    default y
+
+config ZMK_POINTING
+    default y
+
+endif

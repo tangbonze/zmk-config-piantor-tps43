@@ -1,0 +1,5 @@
+config SHIELD_PIANTOR_WIRELESS_LEFT
+    def_bool $(shields_list_contains,piantor_wireless_left)
+
+config SHIELD_PIANTOR_WIRELESS_RIGHT
+    def_bool $(shields_list_contains,piantor_wireless_right)

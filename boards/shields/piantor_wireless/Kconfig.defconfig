@@ -1,0 +1,9 @@
+if SHIELD_PIANTOR_WIRELESS_LEFT || SHIELD_PIANTOR_WIRELESS_RIGHT
+
+config ZMK_KEYBOARD_NAME
+    default "Piantor TPS43"
+
+config ZMK_SPLIT
+    default y
+
+endif
