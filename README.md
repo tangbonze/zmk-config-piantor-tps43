@@ -4,7 +4,7 @@
 
 **中文** · [English](#en)
 
-支持 **SuperMini nRF52840 (`nice_nano_v2`)**、**ZMK Studio 在线改键**、**Azoteq TPS43 触摸板**（[beekeeb/zmk_driver_azoteq](https://github.com/beekeeb/zmk_driver_azoteq)）、**KeyBeacon 状态监控**（[ykiewang/keybeacon](https://github.com/ykiewang/keybeacon) / [zmk-keybeacon](https://github.com/ykiewang/zmk-keybeacon)）以及 **42 键 ⇄ 36 键物理布局无损切换**。
+支持 **SuperMini nRF52840 (`nice_nano//zmk`)**、**ZMK Studio 在线改键（已免解锁）**、**Azoteq TPS43 触摸板**（[beekeeb/zmk_driver_azoteq](https://github.com/beekeeb/zmk_driver_azoteq)）、**KeyBeacon 状态监控**（[ykiewang/keybeacon](https://github.com/ykiewang/keybeacon) / [zmk-keybeacon](https://github.com/ykiewang/zmk-keybeacon)）以及 **42 键 ⇄ 36 键物理布局无损切换**。
 
 ---
 
@@ -19,7 +19,7 @@
 | **3. 纯无线无触摸板版（左手主手）** | `piantor_notp_left_central` | `piantor_notp_right_peripheral` | 无（不启用 I2C 与 TPS43） |
 | **重置配对固件** | `settings_reset` | `settings_reset` | 切换版本/主从前先刷一次 |
 
-> **重要**：三个版本的**主手 (Central)** 固件均已开启 **ZMK Studio** (`CONFIG_ZMK_STUDIO=y` + `studio-rpc-usb-uart`) 和 **KeyBeacon KBP 1.2** (`CONFIG_ZMK_KEYBEACON=y`)，且共用同一份 [config/piantor_wireless.keymap](config/piantor_wireless.keymap)。
+> **重要**：三个版本的**主手 (Central)** 固件均已开启 **ZMK Studio（默认免解锁）** (`CONFIG_ZMK_STUDIO=y`、`CONFIG_ZMK_STUDIO_LOCKING=n` + `studio-rpc-usb-uart`) 和 **KeyBeacon KBP 1.2** (`CONFIG_ZMK_KEYBEACON=y`)，且共用同一份 [config/piantor_wireless.keymap](config/piantor_wireless.keymap)。
 
 ---
 
@@ -39,8 +39,7 @@
 ## 42 键 ⇄ 36 键 Layout 切换方法
 
 1. **在 ZMK Studio 中实时切换**：
-   - 将主手通过 USB（或已解锁后的蓝牙）连接 [ZMK Studio](https://zmk.studio/)。
-   - 同时按住 **`LOWER + RAISE`** 进入 `ADJUST` 层，按下左侧第 5 列中行键（`G` 位置）触发 **`&studio_unlock`** 解锁。
+   - 将主手通过 USB 或蓝牙直接连接 [ZMK Studio](https://zmk.studio/)。
    - 在 ZMK Studio 右上角布局选择菜单即可在 **`Piantor 42-Key (6-Col)`** 与 **`Piantor 36-Key (5-Col)`** 之间切换。
    - 已配置 `zmk,physical-layout-position-map`（[piantor_wireless-layouts.dtsi](boards/shields/piantor_wireless/piantor_wireless-layouts.dtsi)），切换至 36 键时会自动忽略外侧第 6 列，其余 36 颗按键映射保持 100% 精准对应。
 2. **编译时直接默认 36 键**：
@@ -73,7 +72,7 @@
 
 [中文](#zh) · **English**
 
-ZMK firmware configuration for the wireless split **Piantor** with **SuperMini nRF52840 (`nice_nano_v2`)**, **ZMK Studio** live keymap editing, **Azoteq TPS43** trackpad ([beekeeb/zmk_driver_azoteq](https://github.com/beekeeb/zmk_driver_azoteq)), **KeyBeacon** status display ([ykiewang/keybeacon](https://github.com/ykiewang/keybeacon) / [zmk-keybeacon](https://github.com/ykiewang/zmk-keybeacon)), and **lossless 42-key ⇄ 36-key physical layout switching**.
+ZMK firmware configuration for the wireless split **Piantor** with **SuperMini nRF52840 (`nice_nano//zmk`)**, **ZMK Studio** live keymap editing (unlocked by default), **Azoteq TPS43** trackpad ([beekeeb/zmk_driver_azoteq](https://github.com/beekeeb/zmk_driver_azoteq)), **KeyBeacon** status display ([ykiewang/keybeacon](https://github.com/ykiewang/keybeacon) / [zmk-keybeacon](https://github.com/ykiewang/zmk-keybeacon)), and **lossless 42-key ⇄ 36-key physical layout switching**.
 
 ---
 
@@ -88,7 +87,7 @@ GitHub Actions automatically builds **3 complete split firmware pairs** plus `se
 | **3. Wireless No-Trackpad (Left Central)** | `piantor_notp_left_central` | `piantor_notp_right_peripheral` | None (I2C and TPS43 disabled) |
 | **Settings Reset** | `settings_reset` | `settings_reset` | Flash before switching roles/variants |
 
-> **Note**: All three **Central** targets enable **ZMK Studio** (`CONFIG_ZMK_STUDIO=y` + `studio-rpc-usb-uart`) and **KeyBeacon KBP 1.2** (`CONFIG_ZMK_KEYBEACON=y`), and share [config/piantor_wireless.keymap](config/piantor_wireless.keymap).
+> **Note**: All three **Central** targets enable **ZMK Studio (pre-unlocked)** (`CONFIG_ZMK_STUDIO=y`, `CONFIG_ZMK_STUDIO_LOCKING=n` + `studio-rpc-usb-uart`) and **KeyBeacon KBP 1.2** (`CONFIG_ZMK_KEYBEACON=y`), and share [config/piantor_wireless.keymap](config/piantor_wireless.keymap).
 
 ---
 
@@ -108,8 +107,7 @@ GitHub Actions automatically builds **3 complete split firmware pairs** plus `se
 ## 42-Key ⇄ 36-Key Layout Switching
 
 1. **Switch live in ZMK Studio**:
-   - Connect the Central half over USB (or BLE once unlocked) to [ZMK Studio](https://zmk.studio/).
-   - Hold **`LOWER + RAISE`** to enter the `ADJUST` layer, then press the left inner-column middle-row key (`G` position) for **`&studio_unlock`**.
+   - Connect the Central half directly over USB or BLE to [ZMK Studio](https://zmk.studio/).
    - Use the layout dropdown in the top-right corner of ZMK Studio to switch between **`Piantor 42-Key (6-Col)`** and **`Piantor 36-Key (5-Col)`**.
    - Mapped via `zmk,physical-layout-position-map` in [piantor_wireless-layouts.dtsi](boards/shields/piantor_wireless/piantor_wireless-layouts.dtsi), so switching to 36 keys drops the break-off 6th outer column while preserving the remaining 36 bindings 1:1.
 2. **Default to 36 keys at compile time**:

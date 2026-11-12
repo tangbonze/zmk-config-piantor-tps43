@@ -6,33 +6,33 @@
 ---
 include:
   # 1. 默认版本：右手为主手 (Central) + 触摸板接右手；左手为从机 (Peripheral)
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: piantor_wireless_right piantor_role_central piantor_tps43_central
     snippet: studio-rpc-usb-uart
     artifact-name: piantor_tps43_right_central
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: piantor_wireless_left
     artifact-name: piantor_tps43_left_peripheral
 
   # 2. 左手主手版：左手为主手 (Central) + 触摸板接左手；右手为从机 (Peripheral)
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: piantor_wireless_left piantor_role_central piantor_tps43_central
     snippet: studio-rpc-usb-uart
     artifact-name: piantor_tps43_left_central
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: piantor_wireless_right
     artifact-name: piantor_tps43_right_peripheral
 
   # 3. 纯无触摸板版：左手为主手 (Central)；右手为从机 (Peripheral)，均不启用 TPS43
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: piantor_wireless_left piantor_role_central
     snippet: studio-rpc-usb-uart
     artifact-name: piantor_notp_left_central
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: piantor_wireless_right
     artifact-name: piantor_notp_right_peripheral
 
   # 4. 配对/角色清除重置固件（切换左右主手前先刷一次）
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: settings_reset
     artifact-name: settings_reset
