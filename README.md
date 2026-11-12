@@ -1,4 +1,8 @@
+<a id="zh"></a>
+
 # Piantor Wireless TPS43 — ZMK 固件配置
+
+**中文** · [English](#en)
 
 支持 **SuperMini nRF52840 (`nice_nano_v2`)**、**ZMK Studio 在线改键**、**Azoteq TPS43 触摸板**（[beekeeb/zmk_driver_azoteq](https://github.com/beekeeb/zmk_driver_azoteq)）、**KeyBeacon 状态监控**（[ykiewang/keybeacon](https://github.com/ykiewang/keybeacon) / [zmk-keybeacon](https://github.com/ykiewang/zmk-keybeacon)）以及 **42 键 ⇄ 36 键物理布局无损切换**。
 
@@ -60,3 +64,72 @@
 1. 若之前刷过不同主从角色的固件，先对左右手各双击 RST 刷入一次 `settings_reset.uf2`。
 2. 根据你的实际装机选择对应的一对 `.uf2`（例如默认右手接 TPS43：右手刷 `piantor_tps43_right_central.uf2`，左手刷 `piantor_tps43_left_peripheral.uf2`）。
 3. 若后续需要调整触摸板方向（如旋转 90°/180° 或上下反转），编辑 [piantor_tps43_central.overlay](boards/shields/piantor_tps43_central/piantor_tps43_central.overlay) 取消注释 `switch-xy` / `invert-x` / `invert-y` / `invert-scroll-y` 即可。
+
+---
+
+<a id="en"></a>
+
+# Piantor Wireless TPS43 — ZMK Firmware Config
+
+[中文](#zh) · **English**
+
+ZMK firmware configuration for the wireless split **Piantor** with **SuperMini nRF52840 (`nice_nano_v2`)**, **ZMK Studio** live keymap editing, **Azoteq TPS43** trackpad ([beekeeb/zmk_driver_azoteq](https://github.com/beekeeb/zmk_driver_azoteq)), **KeyBeacon** status display ([ykiewang/keybeacon](https://github.com/ykiewang/keybeacon) / [zmk-keybeacon](https://github.com/ykiewang/zmk-keybeacon)), and **lossless 42-key ⇄ 36-key physical layout switching**.
+
+---
+
+## Build Targets (`build.yaml`)
+
+GitHub Actions automatically builds **3 complete split firmware pairs** plus `settings_reset`:
+
+| Variant | Central (USB / Host BLE) | Peripheral | Trackpad Side |
+| :--- | :--- | :--- | :--- |
+| **1. Default (Right Central + Right TPS43)** | `piantor_tps43_right_central` | `piantor_tps43_left_peripheral` | **Right** (directly on Central, lowest latency) |
+| **2. Left Central + Left TPS43** | `piantor_tps43_left_central` | `piantor_tps43_right_peripheral` | **Left** (directly on Central, lowest latency) |
+| **3. Wireless No-Trackpad (Left Central)** | `piantor_notp_left_central` | `piantor_notp_right_peripheral` | None (I2C and TPS43 disabled) |
+| **Settings Reset** | `settings_reset` | `settings_reset` | Flash before switching roles/variants |
+
+> **Note**: All three **Central** targets enable **ZMK Studio** (`CONFIG_ZMK_STUDIO=y` + `studio-rpc-usb-uart`) and **KeyBeacon KBP 1.2** (`CONFIG_ZMK_KEYBEACON=y`), and share [config/piantor_wireless.keymap](config/piantor_wireless.keymap).
+
+---
+
+## KeyBeacon Desktop Status Monitor (KBP 1.2)
+
+- Pulls in `ykiewang/zmk-keybeacon` (pinned to `v1.2.0`) via [config/west.yml](config/west.yml) and enables the full KBP 1.2 stack on Central targets in [piantor_role_central.conf](boards/shields/piantor_role_central/piantor_role_central.conf):
+  - `CONFIG_ZMK_KEYBEACON=y`: reports the active layer name (from keymap `display-name`: `QWERTY` / `NUM_NAV` / `SYM_FN` / `ADJUST`) and held modifiers
+  - `CONFIG_ZMK_KEYBEACON_CONNECTIVITY=y`: reports host connection state, active BLE profile slot, split link status, and active output endpoint (`USB` / `BLE`)
+  - `CONFIG_ZMK_KEYBEACON_BATTERY=y`: reports dual-half battery levels together with `CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y` in [piantor_wireless.conf](config/piantor_wireless.conf)
+  - `CONFIG_ZMK_KEYBEACON_HOST_LINK=y`: exposes per-connection read-only host slot context ("in use on this computer" vs "active on another paired host")
+- Peripheral and `settings_reset` targets do not include `piantor_role_central` and are also excluded by `zmk-keybeacon`'s `CONFIG_ZMK_SPLIT_ROLE_CENTRAL` CMake guard.
+- Desktop app (macOS / Windows): download from [ykiewang/keybeacon Releases](https://github.com/ykiewang/keybeacon/releases) and connect the keyboard over Bluetooth.
+- Note: for **Variant 1 (Right Central)**, KeyBeacon battery byte 0 represents Central (Right half) and byte 1 represents Peripheral (Left half).
+
+---
+
+## 42-Key ⇄ 36-Key Layout Switching
+
+1. **Switch live in ZMK Studio**:
+   - Connect the Central half over USB (or BLE once unlocked) to [ZMK Studio](https://zmk.studio/).
+   - Hold **`LOWER + RAISE`** to enter the `ADJUST` layer, then press the left inner-column middle-row key (`G` position) for **`&studio_unlock`**.
+   - Use the layout dropdown in the top-right corner of ZMK Studio to switch between **`Piantor 42-Key (6-Col)`** and **`Piantor 36-Key (5-Col)`**.
+   - Mapped via `zmk,physical-layout-position-map` in [piantor_wireless-layouts.dtsi](boards/shields/piantor_wireless/piantor_wireless-layouts.dtsi), so switching to 36 keys drops the break-off 6th outer column while preserving the remaining 36 bindings 1:1.
+2. **Default to 36 keys at compile time**:
+   - Uncomment `chosen { zmk,physical-layout = &physical_layout_36; };` at the top of [config/piantor_wireless.keymap](config/piantor_wireless.keymap) and rebuild.
+
+---
+
+## Hardware Pinout (Matches PCB)
+
+- **Matrix**: `col2row`, identical pin assignment on Left and Right halves:
+  - `row0–row3`: `P0.31 / P0.29 / P0.02 / P1.15` (`&pro_micro 21, 20, 19, 18`)
+  - `col0–col5`: `P1.00 / P0.11 / P0.09 / P0.10 / P1.11 / P1.13` (`&pro_micro 6, 7, 10, 16, 14, 15`, where `col0` is the snap-off 6th column)
+- **Azoteq TPS43 (`J_TPS`)**:
+  - `SDA`: `P0.17` (`&pro_micro 2`) / `SCL`: `P0.20` (`&pro_micro 3`)
+  - `RDY`: `P1.04` (`&pro_micro 8`, active-high interrupt) / `NRST`: `P1.06` (`&pro_micro 9`, driven low 10 ms to reset, high 3.3 V to run)
+
+---
+
+## Flashing
+
+1. If switching from firmware with different Central/Peripheral roles, double-press RST on both halves and flash `settings_reset.uf2` first.
+2. Flash the matching `.uf2` pair for your build (e.g., for Default Right TPS43: flash `piantor_tps43_right_central.uf2` to the Right half and `piantor_tps43_left_peripheral.uf2` to the Left half).
+3. To adjust trackpad orientation (90°/180° rotation or inverted axes/scroll), uncomment `switch-xy` / `invert-x` / `invert-y` / `invert-scroll-y` in [piantor_tps43_central.overlay](boards/shields/piantor_tps43_central/piantor_tps43_central.overlay).
